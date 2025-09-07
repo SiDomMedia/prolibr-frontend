@@ -1,0 +1,28 @@
+{
+  "routes": [
+    {
+      "route": "/auth/callback",
+      "serve": "/index.html"
+    },
+    {
+      "route": "/dashboard",
+      "serve": "/index.html"
+    },
+    {
+      "route": "/prompts",
+      "serve": "/index.html"
+    },
+    {
+      "route": "/prompts/create",
+      "serve": "/index.html"
+    },
+    {
+      "route": "/categories",
+      "serve": "/index.html"
+    }
+  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/images/*.{png,jpg,gif}", "/css/*"]
+  }
+}
