@@ -1,62 +1,111 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-const AuthContext = createContext(null);
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+// Global authentication state (no Context needed)
+let globalAuthState = {
+  user: null,
+  loading: false,
+  token: null,
+  isAuthenticated: false
 };
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+// State change listeners
+const authListeners = new Set();
 
-  const signIn = () => {
+// Notify all listeners of state changes
+const notifyListeners = () => {
+  authListeners.forEach(listener => listener(globalAuthState));
+};
+
+// Authentication API
+const authAPI = {
+  signIn: () => {
     window.location.href = '/auth/microsoft';
-  };
+  },
 
-  const signOut = () => {
-    setUser(null);
+  signOut: () => {
+    globalAuthState = {
+      user: null,
+      loading: false,
+      token: null,
+      isAuthenticated: false
+    };
     localStorage.removeItem('authToken');
     localStorage.removeItem('refreshToken');
+    notifyListeners();
     window.location.href = '/';
-  };
+  },
 
-  const value = {
-    user,
-    loading,
-    signIn,
-    signOut,
-    isAuthenticated: !!user,
-    setUser
-  };
+  setUser: (user, token) => {
+    globalAuthState = {
+      ...globalAuthState,
+      user,
+      token,
+      isAuthenticated: !!user
+    };
+    if (token) {
+      localStorage.setItem('authToken', token);
+    }
+    notifyListeners();
+  },
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  setLoading: (loading) => {
+    globalAuthState = {
+      ...globalAuthState,
+      loading
+    };
+    notifyListeners();
+  },
+
+  getState: () => globalAuthState
 };
 
+// Hook to use authentication (no Context needed)
+export const useAuth = () => {
+  const [authState, setAuthState] = useState(globalAuthState);
+
+  useEffect(() => {
+    // Subscribe to auth changes
+    const listener = (newState) => {
+      setAuthState({ ...newState });
+    };
+    
+    authListeners.add(listener);
+    
+    // Initial state sync
+    setAuthState({ ...globalAuthState });
+    
+    // Cleanup
+    return () => {
+      authListeners.delete(listener);
+    };
+  }, []);
+
+  return {
+    ...authState,
+    signIn: authAPI.signIn,
+    signOut: authAPI.signOut,
+    setUser: authAPI.setUser
+  };
+};
+
+// OAuth callback hook
 export const useAuthCallback = () => {
   const [isProcessing, setIsProcessing] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const processAuthCallback = async () => {
       try {
+        authAPI.setLoading(true);
+        
         // Extract parameters from URL
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         const state = urlParams.get('state');
-        const error = urlParams.get('error');
+        const urlError = urlParams.get('error');
 
-        if (error) {
-          setError(`Authentication failed: ${error}`);
+        if (urlError) {
+          setError(`Authentication failed: ${urlError}`);
           setIsProcessing(false);
           return;
         }
@@ -82,10 +131,12 @@ export const useAuthCallback = () => {
 
         const data = await response.json();
         
-        // Store user data and tokens
-        setUser(data.user);
-        localStorage.setItem('authToken', data.token);
-        localStorage.setItem('refreshToken', data.refreshToken);
+        // Set user data and tokens
+        authAPI.setUser(data.user, data.token);
+        
+        if (data.refreshToken) {
+          localStorage.setItem('refreshToken', data.refreshToken);
+        }
 
         // Clear URL parameters
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -99,6 +150,7 @@ export const useAuthCallback = () => {
         setError(err.message);
       } finally {
         setIsProcessing(false);
+        authAPI.setLoading(false);
       }
     };
 
@@ -108,10 +160,27 @@ export const useAuthCallback = () => {
   return {
     isProcessing,
     error,
-    user,
+    user: globalAuthState.user,
     retry: () => {
       setIsProcessing(true);
       setError(null);
     }
   };
 };
+
+// Initialize auth state from localStorage on app start
+const initializeAuth = () => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    // In a real app, you'd validate this token with your backend
+    // For now, just set the authenticated state
+    globalAuthState = {
+      ...globalAuthState,
+      token,
+      isAuthenticated: true
+    };
+  }
+};
+
+// Call initialization
+initializeAuth();
