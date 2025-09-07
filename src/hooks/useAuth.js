@@ -19,7 +19,7 @@ const notifyListeners = () => {
 // Authentication API
 const authAPI = {
   signIn: () => {
-    window.location.href = '/auth/microsoft';
+    window.location.href = 'https://prolibr-backend-api-f0b2bwe0cdbfa7bx.uksouth-01.azurewebsites.net/auth/microsoft';
   },
 
   signOut: () => {
@@ -117,7 +117,7 @@ export const useAuthCallback = () => {
         }
 
         // Exchange code for tokens with your backend
-        const response = await fetch('/api/auth/callback', {
+        const response = await fetch('https://prolibr-backend-api-f0b2bwe0cdbfa7bx.uksouth-01.azurewebsites.net/api/auth/callback', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
