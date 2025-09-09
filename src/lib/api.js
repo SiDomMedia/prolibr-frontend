@@ -1898,3 +1898,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('🔒 Security: Bearer token authentication');
   console.log('✨ Ready for secure AI prompt management!');
 });
+// Create singleton instance
+const api = new ProLibrAPI();
+
+export default api;
+export { ApiError };
