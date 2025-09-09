@@ -1902,4 +1902,4 @@ app.listen(PORT, '0.0.0.0', () => {
 const api = new ProLibrAPI();
 
 export default api;
-export { ApiError };
+
