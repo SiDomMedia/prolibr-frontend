@@ -4,7 +4,6 @@ import { useAuth } from './hooks/useAuth.js';
 import LandingPage from './components/LandingPage.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import CreatePrompt from './components/CreatePrompt.jsx';
-import AuthCallback from './components/AuthCallback.jsx';
 import './App.css';
 
 // Protected route wrapper
