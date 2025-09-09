@@ -1,11 +1,13 @@
 // Landing page component for ProLibr AI
 import { useAuth } from '../hooks/useAuth.js';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button.jsx';
 import { Shield, Zap, Database, BarChart3, Lock, Cpu } from 'lucide-react';
 import '../App.css';
 
 export default function LandingPage() {
   const { signIn, mockSignIn, isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleSignIn = async () => {
     try {
@@ -30,6 +32,16 @@ export default function LandingPage() {
     }
   };
 
+  const handleDashboardClick = () => {
+    // FIXED: Don't trigger signIn, just navigate
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      // Navigate to login page instead of triggering OAuth
+      navigate('/login');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
@@ -38,10 +50,8 @@ export default function LandingPage() {
     );
   }
 
-  if (isAuthenticated) {
-    window.location.href = '/dashboard';
-    return null;
-  }
+  // FIXED: Don't auto-redirect, let user click dashboard button
+  // Remove the automatic redirect that was here
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white relative overflow-hidden">
@@ -74,12 +84,22 @@ export default function LandingPage() {
                 SECURE
               </div>
             </div>
-            <Button 
-              onClick={signIn}
-              className="bg-cyan-600 hover:bg-cyan-700 text-white border-cyan-500"
-            >
-              Sign in with Microsoft
-            </Button>
+            {/* Header buttons - conditional based on auth status */}
+            {isAuthenticated ? (
+              <Button 
+                onClick={handleDashboardClick}
+                className="bg-cyan-600 hover:bg-cyan-700 text-white border-cyan-500"
+              >
+                Go to Dashboard
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleSignIn}
+                className="bg-cyan-600 hover:bg-cyan-700 text-white border-cyan-500"
+              >
+                Sign in with Microsoft
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -98,13 +118,24 @@ export default function LandingPage() {
             Your secure AI prompt management platform. Enterprise-grade security with 
             rate limiting, input validation, and comprehensive logging. Sign in to access your command center.
           </p>
-          <Button 
-            onClick={signIn}
-            size="lg"
-            className="bg-cyan-600 hover:bg-cyan-700 text-white text-lg px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
-          >
-            Access Command Center
-          </Button>
+          {/* Main CTA button - conditional */}
+          {isAuthenticated ? (
+            <Button 
+              onClick={handleDashboardClick}
+              size="lg"
+              className="bg-cyan-600 hover:bg-cyan-700 text-white text-lg px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
+            >
+              Access Command Center
+            </Button>
+          ) : (
+            <Button 
+              onClick={handleSignIn}
+              size="lg"
+              className="bg-cyan-600 hover:bg-cyan-700 text-white text-lg px-8 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
+            >
+              Sign In to Access Command Center
+            </Button>
+          )}
         </div>
 
         {/* Features grid */}
@@ -156,14 +187,26 @@ export default function LandingPage() {
           <p className="text-xl text-slate-300 mb-8">
             Join the secure AI prompt management revolution
           </p>
-          <Button 
-            onClick={handleSignIn}
-            size="lg"
-            className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white text-lg px-12 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
-          >
-            <Lock className="h-5 w-5 mr-2" />
-            Secure Sign In
-          </Button>
+          {/* Bottom CTA button - conditional */}
+          {isAuthenticated ? (
+            <Button 
+              onClick={handleDashboardClick}
+              size="lg"
+              className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white text-lg px-12 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
+            >
+              <Lock className="h-5 w-5 mr-2" />
+              Go to Dashboard
+            </Button>
+          ) : (
+            <Button 
+              onClick={handleSignIn}
+              size="lg"
+              className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white text-lg px-12 py-4 rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25"
+            >
+              <Lock className="h-5 w-5 mr-2" />
+              Secure Sign In
+            </Button>
+          )}
         </div>
       </main>
 
@@ -194,4 +237,3 @@ function SecurityFeature({ title, description }) {
     </div>
   );
 }
-
