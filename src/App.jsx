@@ -59,10 +59,7 @@ function App() {
               </PublicRoute>
             } 
           />
-          
-          {/* Authentication callback */}
-          <Route path="/auth/callback" element={<AuthCallback />} />
-          
+                              
           {/* Protected routes */}
           <Route 
             path="/dashboard" 
