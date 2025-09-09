@@ -19,7 +19,7 @@ const notifyListeners = () => {
 // Authentication API
 const authAPI = {
   signIn: () => {
-    window.location.href = 'https://prolibr-backend-api-f0b2bwe0cdbfa7bx.uksouth-01.azurewebsites.net/auth/microsoft';
+    window.location.href = 'https://prolibr-backend-api-f0b2bwe0cdbfa7bx.uksouth-01.azurewebsites.net/auth/login';
   },
 
   signOut: () => {
@@ -88,99 +88,4 @@ export const useAuth = () => {
   };
 };
 
-// OAuth callback hook
-export const useAuthCallback = () => {
-  const [isProcessing, setIsProcessing] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const processAuthCallback = async () => {
-      try {
-        authAPI.setLoading(true);
-        
-        // Extract parameters from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const state = urlParams.get('state');
-        const urlError = urlParams.get('error');
-
-        if (urlError) {
-          setError(`Authentication failed: ${urlError}`);
-          setIsProcessing(false);
-          return;
-        }
-
-        if (!code) {
-          setError('No authorization code received');
-          setIsProcessing(false);
-          return;
-        }
-
-        // Exchange code for tokens with your backend
-        const response = await fetch('https://prolibr-backend-api-f0b2bwe0cdbfa7bx.uksouth-01.azurewebsites.net/api/auth/callback', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code, state }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        // Set user data and tokens
-        authAPI.setUser(data.user, data.token);
-        
-        if (data.refreshToken) {
-          localStorage.setItem('refreshToken', data.refreshToken);
-        }
-
-        // Clear URL parameters
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-        // Redirect to dashboard or intended destination
-        const redirectTo = localStorage.getItem('redirectAfterAuth') || '/dashboard';
-        localStorage.removeItem('redirectAfterAuth');
-        window.location.href = redirectTo;
-
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsProcessing(false);
-        authAPI.setLoading(false);
-      }
-    };
-
-    processAuthCallback();
-  }, []);
-
-  return {
-    isProcessing,
-    error,
-    user: globalAuthState.user,
-    retry: () => {
-      setIsProcessing(true);
-      setError(null);
-    }
-  };
-};
-
-// Initialize auth state from localStorage on app start
-const initializeAuth = () => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    // In a real app, you'd validate this token with your backend
-    // For now, just set the authenticated state
-    globalAuthState = {
-      ...globalAuthState,
-      token,
-      isAuthenticated: true
-    };
-  }
-};
-
-// Call initialization
-initializeAuth();
+// OAuth ca
