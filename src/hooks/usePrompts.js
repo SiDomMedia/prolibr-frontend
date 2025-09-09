@@ -1,6 +1,6 @@
 // Prompts management hook for ProLibr AI
 import { useState, useEffect, useCallback } from 'react';
-import api from '../lib/api;
+import api from '../lib/api';
 
 export function usePrompts(initialParams = {}) {
   const [prompts, setPrompts] = useState([]);
