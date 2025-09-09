@@ -1,4 +1,4 @@
-// ProLibr AI React Application
+// ProLibr AI React Application - TEMPORARY FIX FOR TESTING
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth.js';
 import LandingPage from './components/LandingPage.jsx';
@@ -6,7 +6,7 @@ import Dashboard from './components/Dashboard.jsx';
 import CreatePrompt from './components/CreatePrompt.jsx';
 import './App.css';
 
-// Protected route wrapper
+// TEMPORARILY DISABLED - Protected route wrapper
 function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
   
@@ -18,9 +18,10 @@ function ProtectedRoute({ children }) {
     );
   }
   
-  if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  // TEMPORARILY COMMENTED OUT FOR TESTING
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/" replace />;
+  // }
   
   return children;
 }
@@ -37,9 +38,10 @@ function PublicRoute({ children }) {
     );
   }
   
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  // TEMPORARILY COMMENTED OUT FOR TESTING
+  // if (isAuthenticated) {
+  //   return <Navigate to="/dashboard" replace />;
+  // }
   
   return children;
 }
@@ -57,6 +59,12 @@ function App() {
                 <LandingPage />
               </PublicRoute>
             } 
+          />
+          
+          {/* TEMPORARY: Added login route that redirects to dashboard */}
+          <Route 
+            path="/login" 
+            element={<Navigate to="/dashboard" replace />} 
           />
                               
           {/* Protected routes */}
