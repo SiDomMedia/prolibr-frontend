@@ -4,6 +4,8 @@ import { useAuth } from '../hooks/useAuth.js';
 import { Button } from '@/components/ui/button.jsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
 import { ArrowLeft, Edit, Trash2, Copy, Cpu, LogOut, Home, Calendar, Tag } from 'lucide-react';
+import ExecutionLogger from './ExecutionLogger.jsx';
+import ExecutionHistory from './ExecutionHistory.jsx';
 import '../App.css';
 
 export default function PromptDetail() {
@@ -88,6 +90,8 @@ export default function PromptDetail() {
               <CardHeader><CardTitle className="text-cyan-400">Content</CardTitle></CardHeader>
               <CardContent><div className="bg-slate-900/50 rounded-lg p-6 border border-slate-700"><pre className="whitespace-pre-wrap text-slate-200 font-mono text-sm">{prompt.content}</pre></div></CardContent>
             </Card>
+            <ExecutionLogger promptId={id} onExecutionLogged={fetchPrompt} />
+            <ExecutionHistory promptId={id} />
           </div>
         )}
       </main>
