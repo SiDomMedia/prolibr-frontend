@@ -1194,7 +1194,7 @@ app.get('/dashboard', async (req, res) => {
         }
         
         function viewProfile() {
-            fetch('/api/user/profile', {
+            fetch(getApiUrl('/api/user/profile'), {
                 headers: {
                     'Authorization': 'Bearer ${sessionToken}'
                 }

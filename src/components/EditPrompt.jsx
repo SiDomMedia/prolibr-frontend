@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input.jsx';
 import { Textarea } from '@/components/ui/textarea.jsx';
 import { ArrowLeft, Save, Cpu, LogOut, Home } from 'lucide-react';
 import '../App.css';
+import { getApiUrl } from '../config/api';
 
 export default function EditPrompt() {
   const { id } = useParams();
@@ -21,7 +22,7 @@ export default function EditPrompt() {
   const fetchPrompt = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/prompts/${id}`, { credentials: 'include' });
+      const response = await fetch(getApiUrl(`/api/prompts/${id}`), { credentials: 'include' });
       if (!response.ok) throw new Error('Failed to fetch prompt');
       const data = await response.json();
       setFormData({ title: data.title || '', description: data.description || '', content: data.content || '', categoryId: data.category_id || '', visibility: data.visibility || 'private', isTemplate: data.is_template || false, targetAiModel: data.target_ai_model || 'GPT-4', tags: data.tags || [] });
@@ -39,7 +40,7 @@ export default function EditPrompt() {
     setError('');
     setSuccess(false);
     try {
-      const response = await fetch(`/api/prompts/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(formData) });
+      const response = await fetch(getApiUrl(`/api/prompts/${id}`), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(formData) });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to update prompt');

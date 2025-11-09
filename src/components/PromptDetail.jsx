@@ -7,6 +7,7 @@ import { ArrowLeft, Edit, Trash2, Copy, Cpu, LogOut, Home, Calendar, Tag } from 
 import ExecutionLogger from './ExecutionLogger.jsx';
 import ExecutionHistory from './ExecutionHistory.jsx';
 import '../App.css';
+import { getApiUrl } from '../config/api';
 
 export default function PromptDetail() {
   const { id } = useParams();
@@ -21,7 +22,7 @@ export default function PromptDetail() {
   const fetchPrompt = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/prompts/${id}`, { credentials: 'include' });
+      const response = await fetch(getApiUrl(`/api/prompts/${id}`), { credentials: 'include' });
       if (!response.ok) throw new Error('Failed to fetch prompt');
       const data = await response.json();
       setPrompt(data);
@@ -44,7 +45,7 @@ export default function PromptDetail() {
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this prompt?')) return;
     try {
-      const response = await fetch(`/api/prompts/${id}`, { method: 'DELETE', credentials: 'include' });
+      const response = await fetch(getApiUrl(`/api/prompts/${id}`), { method: 'DELETE', credentials: 'include' });
       if (!response.ok) throw new Error('Failed to delete prompt');
       window.location.href = '/prompts';
     } catch (err) {

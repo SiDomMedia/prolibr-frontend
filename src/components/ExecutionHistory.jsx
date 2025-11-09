@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
 import { Button } from '@/components/ui/button.jsx';
 import { History, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 export default function ExecutionHistory({ promptId }) {
   const [executions, setExecutions] = useState([]);
@@ -18,7 +19,7 @@ export default function ExecutionHistory({ promptId }) {
   const fetchExecutions = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/prompts/${promptId}/executions?limit=${limit}&offset=${offset}`, {
+      const response = await fetch(getApiUrl(`/api/prompts/${promptId}/executions?limit=${limit}&offset=${offset}`), {
         credentials: 'include'
       });
 

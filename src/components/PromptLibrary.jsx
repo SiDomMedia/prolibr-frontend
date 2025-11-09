@@ -17,6 +17,7 @@ import {
   Home
 } from 'lucide-react';
 import '../App.css';
+import { getApiUrl } from '../config/api';
 
 export default function PromptLibrary() {
   const { user, signOut } = useAuth();
@@ -46,7 +47,7 @@ export default function PromptLibrary() {
       if (categoryFilter) params.append('category', categoryFilter);
       if (visibilityFilter) params.append('visibility', visibilityFilter);
 
-      const response = await fetch(`/api/prompts?\${params}`, {
+      const response = await fetch(getApiUrl(`/api/prompts?\${params}`), {
         credentials: 'include'
       });
 
@@ -71,7 +72,7 @@ export default function PromptLibrary() {
     }
 
     try {
-      const response = await fetch(`/api/prompts/\${promptId}`, {
+      const response = await fetch(getApiUrl(`/api/prompts/\${promptId}`), {
         method: 'DELETE',
         credentials: 'include'
       });

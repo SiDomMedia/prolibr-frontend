@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input.jsx';
 import { Textarea } from '@/components/ui/textarea.jsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
 import { Play, CheckCircle, XCircle } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 export default function ExecutionLogger({ promptId, onExecutionLogged }) {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ export default function ExecutionLogger({ promptId, onExecutionLogged }) {
     setSuccess(false);
 
     try {
-      const response = await fetch(`/api/prompts/${promptId}/execute`, {
+      const response = await fetch(getApiUrl(`/api/prompts/${promptId}/execute`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

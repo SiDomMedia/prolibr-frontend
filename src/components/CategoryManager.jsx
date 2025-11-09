@@ -16,6 +16,7 @@ import {
   Tag
 } from 'lucide-react';
 import '../App.css';
+import { getApiUrl } from '../config/api';
 
 export default function CategoryManager() {
   const { user, signOut } = useAuth();
@@ -39,7 +40,7 @@ export default function CategoryManager() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/categories', {
+      const response = await fetch(getApiUrl('/api/categories'), {
         credentials: 'include'
       });
 
@@ -60,7 +61,7 @@ export default function CategoryManager() {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/categories', {
+      const response = await fetch(getApiUrl('/api/categories'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -92,7 +93,7 @@ export default function CategoryManager() {
   const handleUpdate = async (id) => {
     try {
       const category = categories.find(c => c.id === id);
-      const response = await fetch(`/api/categories/${id}`, {
+      const response = await fetch(getApiUrl(`/api/categories/${id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -130,7 +131,7 @@ export default function CategoryManager() {
     }
 
     try {
-      const response = await fetch(`/api/categories/${id}`, {
+      const response = await fetch(getApiUrl(`/api/categories/${id}`), {
         method: 'DELETE',
         credentials: 'include'
       });
