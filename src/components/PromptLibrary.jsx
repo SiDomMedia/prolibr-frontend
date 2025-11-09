@@ -46,7 +46,7 @@ export default function PromptLibrary() {
       if (categoryFilter) params.append('category', categoryFilter);
       if (visibilityFilter) params.append('visibility', visibilityFilter);
 
-      const response = await fetch(\`/api/prompts?\${params}\`, {
+      const response = await fetch(`/api/prompts?\${params}`, {
         credentials: 'include'
       });
 
@@ -71,7 +71,7 @@ export default function PromptLibrary() {
     }
 
     try {
-      const response = await fetch(\`/api/prompts/\${promptId}\`, {
+      const response = await fetch(`/api/prompts/\${promptId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -82,7 +82,7 @@ export default function PromptLibrary() {
 
       fetchPrompts();
     } catch (err) {
-      alert(\`Error deleting prompt: \${err.message}\`);
+      alert(`Error deleting prompt: \${err.message}`);
     }
   };
 
@@ -104,11 +104,11 @@ export default function PromptLibrary() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
-          backgroundImage: \`
+          backgroundImage: `
             linear-gradient(90deg, transparent 98%, #00ffff15 99%),
             radial-gradient(circle at 25% 25%, #00ffff20 2px, transparent 3px),
             linear-gradient(45deg, transparent 24%, #00ffff08 25%, #00ffff08 26%, transparent 27%)
-          \`,
+          `,
           backgroundSize: '100px 100px, 200px 200px, 60px 60px'
         }}></div>
       </div>
@@ -187,14 +187,14 @@ export default function PromptLibrary() {
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
                       <CardTitle className="text-cyan-400 text-lg">{prompt.title}</CardTitle>
-                      <span className={\`px-2 py-1 rounded text-xs font-bold \${getVisibilityBadge(prompt.visibility)}\`}>{prompt.visibility}</span>
+                      <span className={`px-2 py-1 rounded text-xs font-bold \${getVisibilityBadge(prompt.visibility)}`}>{prompt.visibility}</span>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-slate-300 text-sm mb-4 line-clamp-3">{prompt.description || 'No description'}</p>
                     <div className="flex gap-2">
-                      <Button onClick={() => window.location.href = \`/prompts/\${prompt.id}\`} variant="outline" size="sm" className="flex-1 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"><Eye className="h-4 w-4 mr-2" />View</Button>
-                      <Button onClick={() => window.location.href = \`/prompts/\${prompt.id}/edit\`} variant="outline" size="sm" className="flex-1 border-blue-500/50 text-blue-400 hover:bg-blue-500/10"><Edit className="h-4 w-4 mr-2" />Edit</Button>
+                      <Button onClick={() => window.location.href = `/prompts/\${prompt.id}`} variant="outline" size="sm" className="flex-1 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/10"><Eye className="h-4 w-4 mr-2" />View</Button>
+                      <Button onClick={() => window.location.href = `/prompts/\${prompt.id}/edit`} variant="outline" size="sm" className="flex-1 border-blue-500/50 text-blue-400 hover:bg-blue-500/10"><Edit className="h-4 w-4 mr-2" />Edit</Button>
                       <Button onClick={() => handleDelete(prompt.id)} variant="outline" size="sm" className="border-red-500/50 text-red-400 hover:bg-red-500/10"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </CardContent>
