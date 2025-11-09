@@ -4,6 +4,10 @@ import { useAuth } from './hooks/useAuth.js';
 import LandingPage from './components/LandingPage.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import CreatePrompt from './components/CreatePrompt.jsx';
+import PromptLibrary from './components/PromptLibrary.jsx';
+import PromptDetail from './components/PromptDetail.jsx';
+import EditPrompt from './components/EditPrompt.jsx';
+import CategoryManager from './components/CategoryManager.jsx';
 import './App.css';
 
 // Protected route wrapper
@@ -107,6 +111,15 @@ function App() {
           
           <Route 
             path="/categories" 
+            element={
+              <ProtectedRoute>
+                <CategoryManager />
+              </ProtectedRoute>
+            } 
+          />
+          
+          <Route 
+            path="/categories-old" 
             element={
               <ProtectedRoute>
                 <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center text-white">
