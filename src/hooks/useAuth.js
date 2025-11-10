@@ -96,43 +96,40 @@ const authAPI = {
         // Clean URL (remove token parameter)
         window.history.replaceState({}, document.title, window.location.pathname);
         
-        // Try to decode token to get user info (JWT decode)
+        // Validate token with backend to get REAL user data
         try {
-          const tokenParts = tokenFromUrl.split('.');
-          if (tokenParts.length === 3) {
-            // Decode JWT payload
-            const payload = JSON.parse(atob(tokenParts[1]));
-            console.log('Decoded JWT payload:', payload);
-            
-            const user = {
-              id: payload.sub || payload.id || payload.oid || 'unknown',
-              email: payload.email || payload.preferred_username || payload.upn || 'user@prolibr.ai',
-              displayName: payload.name || payload.given_name || payload.email || 'ProLibr User'
-            };
-            
-            authAPI.setUser(user, tokenFromUrl);
-            console.log('User authenticated from token:', user);
-            return;
-          } else {
-            // Not a JWT, create basic user object
-            console.log('Token is not JWT format, creating basic user');
-            const user = {
-              id: 'user-' + Date.now(),
-              email: 'user@prolibr.ai',
-              displayName: 'ProLibr User'
-            };
-            authAPI.setUser(user, tokenFromUrl);
-            return;
+          console.log('Validating token with backend...');
+          const response = await fetch('https://prolibr-backend-api-f0b2bwe0cdbfa7bx.uksouth-01.azurewebsites.net/auth/validate', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${tokenFromUrl}`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.authenticated && data.user) {
+              const user = {
+                id: data.user.id,
+                email: data.user.email,
+                displayName: data.user.displayName || data.user.email
+              };
+              authAPI.setUser(user, tokenFromUrl);
+              console.log('User authenticated from backend:', user);
+              return;
+            }
           }
-        } catch (decodeError) {
-          console.log('Token decode error (non-fatal):', decodeError);
-          // Even if decode fails, we have a token so user is authenticated
-          const user = {
-            id: 'user-' + Date.now(),
-            email: 'user@prolibr.ai',
-            displayName: 'ProLibr User'
-          };
-          authAPI.setUser(user, tokenFromUrl);
+          
+          // If validation fails, clear token and show error
+          console.error('Token validation failed');
+          localStorage.removeItem('authToken');
+          authAPI.setLoading(false);
+          return;
+        } catch (error) {
+          console.error('Token validation error:', error);
+          // If validation fails, clear token
+          localStorage.removeItem('authToken');
+          authAPI.setLoading(false);
           return;
         }
       }
