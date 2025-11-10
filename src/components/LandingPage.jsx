@@ -11,22 +11,8 @@ export default function LandingPage() {
 
   const handleSignIn = async () => {
     try {
-      // Use mock authentication for development
-      if (process.env.NODE_ENV === 'development') {
-        const response = await fetch('http://localhost:3000/auth/mock-login');
-        const authData = await response.json();
-        
-        if (authData.success) {
-          // Store the session token
-          localStorage.setItem('prolibr_token', authData.sessionToken);
-          // Reload the page to update authentication state
-          window.location.reload();
-        } else {
-          throw new Error('Mock authentication failed');
-        }
-      } else {
-        signIn();
-      }
+      // Always use real OAuth authentication
+      signIn();
     } catch (error) {
       console.error('Sign in failed:', error);
     }
